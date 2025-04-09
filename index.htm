@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Jazz Fest Sampler</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Jazz Fest Sampler</title>
+  <meta name="description" content="Jazz Fest Sampler by TheGameBureau.com">
+  <meta name="author" content="TheGameBureau.com">
+  <meta property="og:title" content="Jazz Fest Sampler">
+  <meta property="og:description" content="Explore artists performing at Jazz Fest, listen on your favorite platform. Curated by TheGameBureau.com">
+  <meta property="og:image" content="2024.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -20,12 +29,18 @@
       background: #101010;
       color: white;
       text-align: center;
-      padding: 15px 10px;
+      padding: 15px 10px 8px;
     }
 
     h1 {
       margin: 0;
       font-size: 1.8em;
+    }
+
+    .subtitle {
+      font-size: 0.95em;
+      color: #ccc;
+      margin-top: 5px;
     }
 
     .date-buttons {
@@ -108,16 +123,21 @@
       background: #1DB954;
     }
 
-    .links a[href*="apple"] {
-      background: #FA233B;
-    }
-
     .links a[href*="youtube"] {
       background: #FF0000;
     }
 
-    .links a[href*="chatgpt"] {
-      background: #FF0000;
+    .chatgpt-button {
+      background: #0D0D0D;
+      color: white;
+    }
+
+    .amazon-button {
+      background: #FF9900;
+    }
+
+    .soundcloud-button {
+      background: #FF5500;
     }
 
     .pagination {
@@ -140,11 +160,33 @@
       background: #ccc;
       cursor: not-allowed;
     }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.95em;
+      color: #666;
+    }
+
+    footer a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    .bottom-image {
+      display: block;
+      margin: 20px auto 40px;
+      width: 95%;
+      max-width: 500px;
+      height: auto;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Jazz Fest Sampler</h1>
+    <div class="subtitle">by <a href="https://thegamebureau.com" style="color: #ccc; text-decoration: none;">thegamebureau.com</a></div>
     <div class="date-buttons" id="dateButtons"></div>
   </header>
 
@@ -154,6 +196,12 @@
     <button id="prevPage">Previous</button>
     <button id="nextPage">Next</button>
   </div>
+
+  <footer>
+    Brought to you by <a href="https://thegamebureau.com">thegamebureau.com</a>
+  </footer>
+
+  <img src="2024.jpg" alt="Jazz Fest 2024 Poster" class="bottom-image" />
 
   <script>
     let allPerformances = [];
@@ -183,9 +231,10 @@
             date: getText('date'),
             song: getText('most_popular_song'),
             spotify: getText('spotify_url'),
-            apple: getText('apple_music_url'),
             youtube: getText('youtube_music_url'),
             chatgpt: getText('chatgpt_url'),
+            amazon: getText('amazon_music_url'),
+            soundcloud: getText('soundcloud_url'),
           });
         }
 
@@ -240,10 +289,11 @@
         card.innerHTML = `
           <h2>${p.name}</h2>
           <div class="links">
-            <a href="${p.spotify}" target="_blank">Spotify</a>
-            <a href="${p.apple}" target="_blank">Apple</a>
-            <a href="${p.youtube}" target="_blank">YouTube</a>
-            <a href="${p.chatgpt}" target="_blank">ChatGPT</a>
+            <a href="${p.spotify}">Spotify</a>
+            <a href="${p.youtube}">YouTube</a>
+            <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
+            <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
+            <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
           </div>
         `;
         cardsContainer.appendChild(card);
