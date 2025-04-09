@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Jazz Fest Sampler</title>
-  <meta name="description" content="Jazz Fest Sampler by TheGameBureau.com">
-  <meta name="author" content="TheGameBureau.com">
+  <meta name="description" content="brought to you by The Outsiders Guide to Fest Season">
+  <meta name="author" content="The Outsiders Guide to Fest Season">
   <meta property="og:title" content="Jazz Fest Sampler">
-  <meta property="og:description" content="Explore artists performing at Jazz Fest, listen on your favorite platform. Curated by TheGameBureau.com">
-  <meta property="og:image" content="jazzfest2025_qr.png">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://yourdomain.com">
+  <meta property="og:description" content="Explore artists performing at Jazz Fest, listen on your favorite platform. Curated by The Outsiders Guide to Fest Season">
+  
+  <!-- Open Graph Image (hidden on the page but shown when shared) -->
+  <meta property="og:image" content="logo.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  
+  <meta property="og:type" content="Jazz Fest Sampler brought to you by The Outsiders Guide to Fest Season">
+  <meta property="og:url" content="https://www.facebook.com/61575041643776">
 
   <link rel="icon" type="image/png" sizes="32x32" href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
 
@@ -49,19 +53,19 @@
     }
 
     .button-cubes-top a {
-      background: #007BFF;
-      color: white;
-      padding: 10px 16px;
-      font-size: 0.95em;
-      text-decoration: none;
-      border-radius: 8px;
-      display: inline-block;
-      transition: transform 0.2s ease;
-    }
+  background: #F1C40F; /* Set background to the identified yellow color */
+  color: black; /* Change text color to black for better contrast */
+  padding: 10px 16px;
+  font-size: 0.95em;
+  text-decoration: none;
+  border-radius: 8px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
 
-    .button-cubes-top a:hover {
-      transform: scale(1.05);
-    }
+.button-cubes-top a:hover {
+  transform: scale(1.05);
+}
 
     .date-buttons {
       background: #101010;
@@ -211,17 +215,53 @@
       color: #444;
       line-height: 1.4em;
     }
+
+    /* Facebook Like Button Styling */
+    .fb-like-container {
+      display: flex;
+      justify-content: center;
+      margin: 0; /* Remove margin around the container */
+      padding: 0; /* Remove padding around the container */
+    }
+
+    .fb-like {
+      max-width: 100%;
+      margin: 0; /* Remove margin around the button */
+      padding: 0; /* Remove padding around the button */
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Jazz Fest Sampler</h1>
-    <div class="subtitle">by <a href="https://thegamebureau.com" style="color: #ccc; text-decoration: none;">thegamebureau.com</a></div>
+    <div class="subtitle">brought to you by <a href="https://www.facebook.com/61575041643776" style="color: #ccc; text-decoration: none;">The Outsiders Guide to Fest Season</a></div>
     <div class="button-cubes-top">
       <a href="https://www.nojazzfest.com/downloads/2025-nojhf-8day-cubes.pdf" target="_blank">
         View 8-Day Jazz Fest Cubes (PDF)
       </a>
     </div>
+  
+    <!-- SEARCH BAR -->
+    <div style="margin: 10px auto; max-width: 400px; padding: 0 10px;">
+      <input 
+        id="searchInput" 
+        type="text" 
+        placeholder="Search artists..." 
+        style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em;" />
+    </div>
+  
+    <!-- Facebook Like Button -->
+    <div class="fb-like-container">
+      <div class="fb-like" 
+           data-href="https://www.facebook.com/61575041643776" 
+           data-width="" 
+           data-layout="button_count" 
+           data-action="like" 
+           data-size="small" 
+           data-share="true">
+      </div>
+    </div>
+
     <div class="date-buttons" id="dateButtons"></div>
   </header>
 
@@ -230,10 +270,11 @@
   <div class="pagination">
     <button id="prevPage">Previous</button>
     <button id="nextPage">Next</button>
+    <button id="backToTop" style="display:none;">Back to Top</button>
   </div>
 
   <footer>
-    Brought to you by <a href="https://thegamebureau.com">thegamebureau.com</a>
+    brought to you by <a href="https://www.facebook.com/61575041643776">The Outsiders Guide to Fest Season</a>
   </footer>
 
   <div class="qr-block">
@@ -241,29 +282,34 @@
     <p>Show this QR code to a friend — they can scan it with their phone to instantly access the Sampler.</p>
   </div>
 
+  <!-- Facebook SDK -->
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0" nonce="nPqJlD9B"></script>
+
   <script>
     let allPerformances = [];
     let filteredDates = [];
     let currentPageIndex = 0;
-
+  
     const cardsContainer = document.getElementById('cardsContainer');
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
     const dateButtons = document.getElementById('dateButtons');
-
+    const searchInput = document.getElementById('searchInput');
+    const backToTopBtn = document.getElementById('backToTop');
+  
     fetch('dataprocessed.xml')
       .then(response => response.text())
       .then(data => {
         const parser = new DOMParser();
         const xml = parser.parseFromString(data, "application/xml");
         const performances = xml.getElementsByTagName('performance');
-
+  
         for (let i = 0; i < performances.length; i++) {
           const getText = tag => {
             const el = performances[i].getElementsByTagName(tag)[0];
             return el ? el.textContent.trim() : '';
           };
-
+  
           allPerformances.push({
             name: getText('name'),
             date: getText('date'),
@@ -275,16 +321,16 @@
             soundcloud: getText('soundcloud_url'),
           });
         }
-
+  
         const uniqueDates = [...new Set(allPerformances.map(p => p.date))];
         uniqueDates.sort();
         filteredDates = uniqueDates;
-
+  
         const today = new Date();
         const todayStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
         currentPageIndex = uniqueDates.findIndex(d => d >= todayStr);
         if (currentPageIndex === -1) currentPageIndex = 0;
-
+  
         uniqueDates.forEach((date, index) => {
           const btn = document.createElement('button');
           btn.textContent = date;
@@ -294,51 +340,82 @@
           };
           dateButtons.appendChild(btn);
         });
-
+  
         renderPage();
       });
-
+  
     prevBtn.addEventListener('click', () => {
       if (currentPageIndex > 0) {
         currentPageIndex--;
         renderPage();
       }
     });
-
+  
     nextBtn.addEventListener('click', () => {
       if (currentPageIndex < filteredDates.length - 1) {
         currentPageIndex++;
         renderPage();
       }
     });
-
+  
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      if (!query) return renderPage();
+  
+      const matched = allPerformances.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.song.toLowerCase().includes(query)
+      );
+  
+      cardsContainer.innerHTML = '';
+      document.querySelectorAll('.date-buttons button').forEach(btn => btn.classList.remove('active'));
+      matched.forEach(p => createCard(p));
+  
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+    });
+  
+    window.onscroll = () => {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        backToTopBtn.style.display = 'inline-block';
+      } else {
+        backToTopBtn.style.display = 'none';
+      }
+    };
+  
     function renderPage() {
       const selectedDate = filteredDates[currentPageIndex];
       const performances = allPerformances.filter(p => p.date === selectedDate);
       cardsContainer.innerHTML = '';
-
+  
       document.querySelectorAll('.date-buttons button').forEach((btn, i) => {
         btn.classList.toggle('active', i === currentPageIndex);
       });
-
-      performances.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h2>${p.name}</h2>
-          <div class="links">
-            <a href="${p.spotify}">Spotify</a>
-            <a href="${p.youtube}">YouTube</a>
-            <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
-            <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
-            <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
-          </div>
-        `;
-        cardsContainer.appendChild(card);
-      });
-
+  
+      performances.forEach(p => createCard(p));
+  
       prevBtn.disabled = currentPageIndex === 0;
       nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
+    }
+  
+    function createCard(p) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h2>${p.name}</h2>
+        <div class="links">
+          <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
+          <a href="${p.spotify}">Spotify</a>
+          <a href="${p.youtube}">YouTube</a>
+          <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
+          <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
+        </div>
+      `;
+      cardsContainer.appendChild(card);
     }
   </script>
 </body>
