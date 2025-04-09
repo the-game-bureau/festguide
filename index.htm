@@ -9,7 +9,7 @@
   <meta name="author" content="TheGameBureau.com">
   <meta property="og:title" content="Jazz Fest Sampler">
   <meta property="og:description" content="Explore artists performing at Jazz Fest, listen on your favorite platform. Curated by TheGameBureau.com">
-  <meta property="og:image" content="2024.jpg">
+  <meta property="og:image" content="jazzfest2025_qr.png">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://yourdomain.com">
 
@@ -193,13 +193,23 @@
       text-decoration: none;
     }
 
-    .bottom-image {
+    .qr-block {
+      text-align: center;
+      margin: 20px auto 40px;
+    }
+
+    .qr-block img {
+      max-width: 300px;
+      width: 80%;
+      margin: 10px auto;
       display: block;
-      margin: 20px auto 20px;
-      width: 95%;
-      max-width: 500px;
-      height: auto;
-      border-radius: 10px;
+    }
+
+    .qr-block p {
+      font-size: 1em;
+      padding: 0 20px;
+      color: #444;
+      line-height: 1.4em;
     }
   </style>
 </head>
@@ -226,12 +236,9 @@
     Brought to you by <a href="https://thegamebureau.com">thegamebureau.com</a>
   </footer>
 
-  <img src="2024.jpg" alt="Jazz Fest 2024 Poster" class="bottom-image" />
-
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img src="jazzfest2025_qr.png" alt="Scan this to open the Jazz Fest Sampler"
-         style="max-width: 300px; width: 80%; margin: 10px auto; display: block;" />
-    <p style="color: #444; font-size: 0.95em;">Hold your phone up so friends can scan this to get the Sampler.</p>
+  <div class="qr-block">
+    <img src="jazzfest2025_qr.png" alt="Scan this to open the Jazz Fest Sampler" />
+    <p>Show this QR code to a friend — they can scan it with their phone to instantly access the Sampler.</p>
   </div>
 
   <script>
