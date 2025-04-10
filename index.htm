@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,6 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.facebook.com/61575041643776">
   <link rel="icon" type="image/png" sizes="32x32" href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
+
   <style>
     * { box-sizing: border-box; }
     body {
@@ -281,7 +280,7 @@
 
     function copyToClipboardOrShareSMS(artistName, shareUrl) {
       if (isMobileDevice()) {
-        const message = `Check out this artist from Jazz Fest: ${artistName} - ${shareUrl}`;
+        const message = `Check out this artist from the Jazz Fest Sampler: ${artistName} - ${shareUrl}`;
         window.location.href = `sms:?&body=${encodeURIComponent(message)}`;
       } else {
         navigator.clipboard.writeText(shareUrl).then(() => {
@@ -347,10 +346,14 @@
         uniqueDates.forEach((date, index) => {
           const btn = document.createElement('button');
           btn.textContent = date;
-          btn.onclick = () => {
+          btn.addEventListener('click', () => {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.delete('artist');
+            newUrl.searchParams.set('date', date);
+            window.history.pushState({}, '', newUrl);
             currentPageIndex = index;
             renderPage();
-          };
+          });
           dateButtons.appendChild(btn);
         });
 
@@ -360,6 +363,10 @@
     prevBtn.addEventListener('click', () => {
       if (currentPageIndex > 0) {
         currentPageIndex--;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('artist');
+        newUrl.searchParams.set('date', filteredDates[currentPageIndex]);
+        window.history.pushState({}, '', newUrl);
         renderPage();
       }
     });
@@ -367,6 +374,10 @@
     nextBtn.addEventListener('click', () => {
       if (currentPageIndex < filteredDates.length - 1) {
         currentPageIndex++;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('artist');
+        newUrl.searchParams.set('date', filteredDates[currentPageIndex]);
+        window.history.pushState({}, '', newUrl);
         renderPage();
       }
     });
@@ -400,27 +411,42 @@
       }
     };
 
-    function renderPage() {
-      const artistParam = new URLSearchParams(window.location.search).get('artist');
-      let performances;
+    window.onpopstate = () => {
+      renderPage();
+    };
 
-      if (artistParam) {
+    function renderPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const artistParam = urlParams.get('artist');
+      const dateParam = urlParams.get('date');
+      let performances = [];
+
+      if (artistParam && !dateParam) {
         performances = allPerformances.filter(p =>
           p.name.toLowerCase() === decodeURIComponent(artistParam).toLowerCase()
         );
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        document.querySelectorAll('.date-buttons button').forEach(btn => btn.classList.remove('active'));
       } else {
-        const selectedDate = filteredDates[currentPageIndex];
-        performances = allPerformances.filter(p => p.date === selectedDate);
+        let selectedDate;
+        if (dateParam) {
+          selectedDate = decodeURIComponent(dateParam);
+          currentPageIndex = filteredDates.indexOf(selectedDate);
+          if (currentPageIndex === -1) currentPageIndex = 0;
+        }
+        const dateToUse = filteredDates[currentPageIndex];
+        performances = allPerformances.filter(p => p.date === dateToUse);
+
+        document.querySelectorAll('.date-buttons button').forEach((btn, i) => {
+          btn.classList.toggle('active', i === currentPageIndex);
+        });
+        prevBtn.disabled = currentPageIndex === 0;
+        nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
       }
 
       cardsContainer.innerHTML = '';
-      document.querySelectorAll('.date-buttons button').forEach((btn, i) => {
-        btn.classList.toggle('active', i === currentPageIndex);
-      });
       performances.forEach(p => createCard(p));
-      prevBtn.disabled = currentPageIndex === 0;
-      nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
     }
   </script>
 </body>
-</html>
