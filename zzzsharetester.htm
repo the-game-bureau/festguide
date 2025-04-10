@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .share-button {
+      background: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+    }
+    .share-tooltip {
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 0.85em;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .share-button.show-tooltip .share-tooltip {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <button class="share-button">Share This
+    <div class="share-tooltip">Link copied!</div>
+  </button>
+
+  <script>
+    const shareButton = document.querySelector('.share-button');
+    const tooltip = document.querySelector('.share-tooltip');
+    const shareUrl = window.location.href;
+
+    shareButton.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Example Share",
+            text: "Try sharing this!",
+            url: shareUrl,
+          });
+        } catch (err) {
+          console.error('Web Share failed:', err);
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          shareButton.classList.add('show-tooltip');
+          setTimeout(() => {
+            shareButton.classList.remove('show-tooltip');
+          }, 1500);
+        } catch (err) {
+          alert("Copy failed.");
+        }
+      }
+    });
+  </script>
+</body>
+</html>

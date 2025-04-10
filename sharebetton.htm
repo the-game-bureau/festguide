@@ -110,7 +110,7 @@
       align-items: center;
       gap: 12px;
     }
-    .links a {
+    .links a, .links button {
       width: 90%;
       max-width: 300px;
       text-align: center;
@@ -122,7 +122,7 @@
       font-weight: 500;
       transition: transform 0.2s ease, background 0.2s ease;
     }
-    .links a:hover {
+    .links a:hover, .links button:hover {
       transform: scale(1.03);
     }
     .links a[href*="spotify"] { background: #1DB954; }
@@ -130,6 +130,26 @@
     .chatgpt-button { background: #0D0D0D; }
     .amazon-button { background: #FF9900; }
     .soundcloud-button { background: #FF5500; }
+
+    /* 🎯 Custom Share Button */
+    .share-button {
+      background: #8e44ad;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9em;
+      padding: 8px 12px;
+      border-radius: 6px;
+      width: auto;
+      max-width: 240px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .share-button:hover {
+      background: #732d91;
+      transform: scale(1.05);
+    }
+
     .pagination {
       text-align: center;
       padding: 20px 0;
@@ -191,7 +211,12 @@
   <header>
     <h1>Jazz Fest Sampler</h1>
     <img class="logo-img" src="logo.jpg" alt="Jazz Fest Logo" />
-    <div class="subtitle">brought to you by <a href="https://www.facebook.com/61575041643776" style="color: #ccc; text-decoration: none;">The Outsiders Guide to Fest Season</a></div>
+    <div class="subtitle">
+      brought to you by
+      <a href="https://www.facebook.com/61575041643776" style="color: #ccc; text-decoration: none;">
+        The Outsiders Guide to Fest Season
+      </a>
+    </div>
 
     <div class="button-cubes-top">
       <a href="https://www.nojazzfest.com/downloads/2025-nojhf-8day-cubes.pdf" target="_blank">
@@ -200,11 +225,8 @@
     </div>
 
     <div style="margin: 10px auto; max-width: 400px; padding: 0 10px;">
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="Search artists..."
-        style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em;" />
+      <input id="searchInput" type="text" placeholder="Search artists..."
+             style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em;" />
     </div>
 
     <div class="fb-like-container">
@@ -238,7 +260,9 @@
     <p>Show this QR code to a friend — they can scan it with their phone to instantly access the Sampler.</p>
   </div>
 
-  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0"></script>
+  <script async defer crossorigin="anonymous"
+          src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0"></script>
+
   <script>
     let allPerformances = [];
     let filteredDates = [];
@@ -250,6 +274,41 @@
     const dateButtons = document.getElementById('dateButtons');
     const searchInput = document.getElementById('searchInput');
     const backToTopBtn = document.getElementById('backToTop');
+
+    function isMobileDevice() {
+      return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    }
+
+    function copyToClipboardOrShareSMS(artistName, shareUrl) {
+      if (isMobileDevice()) {
+        const message = `Check out this artist from Jazz Fest: ${artistName} - ${shareUrl}`;
+        window.location.href = `sms:?&body=${encodeURIComponent(message)}`;
+      } else {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('🎵 Link copied to clipboard!');
+        }).catch(() => {
+          alert('Could not copy the link.');
+        });
+      }
+    }
+
+    function createCard(p) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
+      card.innerHTML = `
+        <h2>${p.name}</h2>
+        <div class="links">
+          <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
+          <a href="${p.spotify}">Spotify</a>
+          <a href="${p.youtube}">YouTube Music</a>
+          <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
+          <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
+          <button class="share-button" onclick="copyToClipboardOrShareSMS('${p.name}', '${shareUrl}')">📲 Share This Artist</button>
+        </div>
+      `;
+      cardsContainer.appendChild(card);
+    }
 
     fetch('dataprocessed.xml')
       .then(response => response.text())
@@ -342,34 +401,25 @@
     };
 
     function renderPage() {
-      const selectedDate = filteredDates[currentPageIndex];
-      const performances = allPerformances.filter(p => p.date === selectedDate);
-      cardsContainer.innerHTML = '';
+      const artistParam = new URLSearchParams(window.location.search).get('artist');
+      let performances;
 
+      if (artistParam) {
+        performances = allPerformances.filter(p =>
+          p.name.toLowerCase() === decodeURIComponent(artistParam).toLowerCase()
+        );
+      } else {
+        const selectedDate = filteredDates[currentPageIndex];
+        performances = allPerformances.filter(p => p.date === selectedDate);
+      }
+
+      cardsContainer.innerHTML = '';
       document.querySelectorAll('.date-buttons button').forEach((btn, i) => {
         btn.classList.toggle('active', i === currentPageIndex);
       });
-
       performances.forEach(p => createCard(p));
-
       prevBtn.disabled = currentPageIndex === 0;
       nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
-    }
-
-    function createCard(p) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <h2>${p.name}</h2>
-        <div class="links">
-          <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
-          <a href="${p.spotify}">Spotify</a>
-          <a href="${p.youtube}">YouTube Music</a>
-          <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
-          <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
-        </div>
-      `;
-      cardsContainer.appendChild(card);
     }
   </script>
 </body>
