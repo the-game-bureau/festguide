@@ -1,0 +1,452 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jazz Fest Sampler</title>
+  <meta name="description" content="brought to you by The Outsiders Guide to Fest Season">
+  <meta name="author" content="The Outsiders Guide to Fest Season">
+  <meta property="og:title" content="Jazz Fest Sampler">
+  <meta property="og:description" content="Explore artists performing at Jazz Fest, listen on your favorite platform. Curated by The Outsiders Guide to Fest Season">
+  <meta property="og:image" content="logo.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.facebook.com/61575041643776">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+    header {
+      background: #101010;
+      color: white;
+      text-align: center;
+      padding: 15px 10px 8px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.8em;
+    }
+    .logo-img {
+      max-width: 120px;
+      height: auto;
+      margin-top: 10px;
+    }
+    .subtitle {
+      font-size: 0.95em;
+      color: #ccc;
+      margin-top: 5px;
+    }
+    .button-cubes-top {
+      margin: 15px auto 5px;
+      display: inline-block;
+    }
+    .button-cubes-top a {
+      background: #F1C40F;
+      color: white;
+      padding: 10px 16px;
+      font-size: 0.95em;
+      text-decoration: none;
+      border-radius: 8px;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+    .button-cubes-top a:hover {
+      transform: scale(1.05);
+    }
+    .date-buttons {
+      background: #000;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+    }
+    .date-buttons button {
+      background: #F1C40F;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.95em;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .date-buttons button.active {
+      background: #333;
+    }
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 20px;
+    }
+    .card {
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
+      transition: box-shadow 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .card h2 {
+      margin: 0 0 20px;
+      font-size: 1.6em;
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .links a, .links button {
+      width: 90%;
+      max-width: 300px;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 500;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .links a:hover, .links button:hover {
+      transform: scale(1.03);
+    }
+    .links a[href*="spotify"] { background: #1DB954; }
+    .links a[href*="youtube"] { background: #FF0000; }
+    .chatgpt-button { background: #0D0D0D; }
+    .amazon-button { background: #FF9900; }
+    .soundcloud-button { background: #FF5500; }
+
+    /* 🎯 Custom Share Button */
+    .share-button {
+      background: #8e44ad;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9em;
+      padding: 8px 12px;
+      border-radius: 6px;
+      width: auto;
+      max-width: 240px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .share-button:hover {
+      background: #732d91;
+      transform: scale(1.05);
+    }
+
+    .pagination {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .pagination button {
+      margin: 0 6px;
+      padding: 10px 16px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background: #444;
+      color: white;
+      cursor: pointer;
+    }
+    .pagination button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.95em;
+      color: #666;
+    }
+    footer a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    .qr-block {
+      text-align: center;
+      margin: 20px auto 40px;
+    }
+    .qr-block img {
+      max-width: 300px;
+      width: 80%;
+      margin: 10px auto;
+      display: block;
+    }
+    .qr-block p {
+      font-size: 1em;
+      padding: 0 20px;
+      color: #444;
+      line-height: 1.4em;
+    }
+    .fb-like-container {
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+    }
+    .fb-like {
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Jazz Fest Sampler</h1>
+    <img class="logo-img" src="logo.jpg" alt="Jazz Fest Logo" />
+    <div class="subtitle">
+      brought to you by
+      <a href="https://www.facebook.com/61575041643776" style="color: #ccc; text-decoration: none;">
+        The Outsiders Guide to Fest Season
+      </a>
+    </div>
+
+    <div class="button-cubes-top">
+      <a href="https://www.nojazzfest.com/downloads/2025-nojhf-8day-cubes.pdf" target="_blank">
+        View 8-Day Jazz Fest Cubes (PDF)
+      </a>
+    </div>
+
+    <div style="margin: 10px auto; max-width: 400px; padding: 0 10px;">
+      <input id="searchInput" type="text" placeholder="Search artists..."
+             style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em;" />
+    </div>
+
+    <div class="fb-like-container">
+      <div class="fb-like"
+           data-href="https://www.facebook.com/61575041643776"
+           data-width=""
+           data-layout="button_count"
+           data-action="like"
+           data-size="small"
+           data-share="true">
+      </div>
+    </div>
+
+    <div class="date-buttons" id="dateButtons"></div>
+  </header>
+
+  <div class="cards-container" id="cardsContainer"></div>
+
+  <div class="pagination">
+    <button id="prevPage">Previous</button>
+    <button id="nextPage">Next</button>
+    <button id="backToTop" style="display:none;">Back to Top</button>
+  </div>
+
+  <footer>
+    brought to you by <a href="https://www.facebook.com/61575041643776">The Outsiders Guide to Fest Season</a>
+  </footer>
+
+  <div class="qr-block">
+    <img src="jazzfest2025_qr.png" alt="Scan this to open the Jazz Fest Sampler" />
+    <p>Show this QR code to a friend — they can scan it with their phone to instantly access the Sampler.</p>
+  </div>
+
+  <script async defer crossorigin="anonymous"
+          src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0"></script>
+
+  <script>
+    let allPerformances = [];
+    let filteredDates = [];
+    let currentPageIndex = 0;
+
+    const cardsContainer = document.getElementById('cardsContainer');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const dateButtons = document.getElementById('dateButtons');
+    const searchInput = document.getElementById('searchInput');
+    const backToTopBtn = document.getElementById('backToTop');
+
+    function isMobileDevice() {
+      return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    }
+
+    function copyToClipboardOrShareSMS(artistName, shareUrl) {
+      if (isMobileDevice()) {
+        const message = `Check out this artist from the Jazz Fest Sampler: ${artistName} - ${shareUrl}`;
+        window.location.href = `sms:?&body=${encodeURIComponent(message)}`;
+      } else {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('🎵 Link copied to clipboard!');
+        }).catch(() => {
+          alert('Could not copy the link.');
+        });
+      }
+    }
+
+    function createCard(p) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
+      card.innerHTML = `
+        <h2>${p.name}</h2>
+        <div class="links">
+          <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
+          <a href="${p.spotify}">Spotify</a>
+          <a href="${p.youtube}">YouTube Music</a>
+          <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
+          <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
+          <button class="share-button" onclick="copyToClipboardOrShareSMS('${p.name}', '${shareUrl}')">📲 Share This Artist</button>
+        </div>
+      `;
+      cardsContainer.appendChild(card);
+    }
+
+    fetch('dataprocessed.xml')
+      .then(response => response.text())
+      .then(data => {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data, "application/xml");
+        const performances = xml.getElementsByTagName('performance');
+
+        for (let i = 0; i < performances.length; i++) {
+          const getText = tag => {
+            const el = performances[i].getElementsByTagName(tag)[0];
+            return el ? el.textContent.trim() : '';
+          };
+
+          allPerformances.push({
+            name: getText('name'),
+            date: getText('date'),
+            song: getText('most_popular_song'),
+            spotify: getText('spotify_url'),
+            youtube: getText('youtube_music_url'),
+            chatgpt: getText('chatgpt_url'),
+            amazon: getText('amazon_music_url'),
+            soundcloud: getText('soundcloud_url'),
+          });
+        }
+
+        const uniqueDates = [...new Set(allPerformances.map(p => p.date))];
+        uniqueDates.sort();
+        filteredDates = uniqueDates;
+
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
+        currentPageIndex = uniqueDates.findIndex(d => d >= todayStr);
+        if (currentPageIndex === -1) currentPageIndex = 0;
+
+        uniqueDates.forEach((date, index) => {
+          const btn = document.createElement('button');
+          btn.textContent = date;
+          btn.addEventListener('click', () => {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.delete('artist');
+            newUrl.searchParams.set('date', date);
+            window.history.pushState({}, '', newUrl);
+            currentPageIndex = index;
+            renderPage();
+          });
+          dateButtons.appendChild(btn);
+        });
+
+        renderPage();
+      });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPageIndex > 0) {
+        currentPageIndex--;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('artist');
+        newUrl.searchParams.set('date', filteredDates[currentPageIndex]);
+        window.history.pushState({}, '', newUrl);
+        renderPage();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentPageIndex < filteredDates.length - 1) {
+        currentPageIndex++;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('artist');
+        newUrl.searchParams.set('date', filteredDates[currentPageIndex]);
+        window.history.pushState({}, '', newUrl);
+        renderPage();
+      }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      if (!query) return renderPage();
+
+      const matched = allPerformances.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.song.toLowerCase().includes(query)
+      );
+
+      cardsContainer.innerHTML = '';
+      document.querySelectorAll('.date-buttons button').forEach(btn => btn.classList.remove('active'));
+      matched.forEach(p => createCard(p));
+
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+    });
+
+    window.onscroll = () => {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        backToTopBtn.style.display = 'inline-block';
+      } else {
+        backToTopBtn.style.display = 'none';
+      }
+    };
+
+    window.onpopstate = () => {
+      renderPage();
+    };
+
+    function renderPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const artistParam = urlParams.get('artist');
+      const dateParam = urlParams.get('date');
+      let performances = [];
+
+      if (artistParam && !dateParam) {
+        performances = allPerformances.filter(p =>
+          p.name.toLowerCase() === decodeURIComponent(artistParam).toLowerCase()
+        );
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        document.querySelectorAll('.date-buttons button').forEach(btn => btn.classList.remove('active'));
+      } else {
+        let selectedDate;
+        if (dateParam) {
+          selectedDate = decodeURIComponent(dateParam);
+          currentPageIndex = filteredDates.indexOf(selectedDate);
+          if (currentPageIndex === -1) currentPageIndex = 0;
+        }
+        const dateToUse = filteredDates[currentPageIndex];
+        performances = allPerformances.filter(p => p.date === dateToUse);
+
+        document.querySelectorAll('.date-buttons button').forEach((btn, i) => {
+          btn.classList.toggle('active', i === currentPageIndex);
+        });
+        prevBtn.disabled = currentPageIndex === 0;
+        nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
+      }
+
+      cardsContainer.innerHTML = '';
+      performances.forEach(p => createCard(p));
+    }
+  </script>
+</body>
