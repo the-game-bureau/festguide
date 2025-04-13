@@ -13,197 +13,218 @@
   <meta property="og:url" content="https://www.facebook.com/61575041643776">
   <link rel="icon" type="image/png" sizes="32x32" href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
 
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: #f4f4f4;
-      color: #222;
-    }
-    header {
-      background: #101010;
-      color: white;
-      text-align: center;
-      padding: 15px 10px 8px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 1.8em;
-    }
-    .logo-img {
-      max-width: 120px;
-      height: auto;
-      margin-top: 10px;
-    }
-    .subtitle {
-      font-size: 0.95em;
-      color: #ccc;
-      margin-top: 5px;
-    }
-    .button-cubes-top {
-      margin: 15px auto 5px;
-      display: inline-block;
-    }
-    .button-cubes-top a {
-      background: #F1C40F;
-      color: white;
-      padding: 10px 16px;
-      font-size: 0.95em;
-      text-decoration: none;
-      border-radius: 8px;
-      display: inline-block;
-      transition: transform 0.2s ease;
-    }
-    .button-cubes-top a:hover {
-      transform: scale(1.05);
-    }
-    .date-buttons {
-      background: #000;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px;
-    }
-    .date-buttons button {
-      background: #F1C40F;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      font-size: 0.95em;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .date-buttons button.active {
-      background: #333;
-    }
-    .cards-container {
-      display: flex;
-      flex-direction: column;
-      padding: 12px;
-      gap: 20px;
-    }
-    .card {
-      background: linear-gradient(145deg, #ffffff, #f0f0f0);
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
-      transition: box-shadow 0.3s ease;
-    }
-    .card:hover {
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-    .card h2 {
-      margin: 0 0 20px;
-      font-size: 1.6em;
-      text-align: center;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-    }
-    .links {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-    .links a, .links button {
-      width: 90%;
-      max-width: 300px;
-      text-align: center;
-      color: white;
-      text-decoration: none;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 1em;
-      font-weight: 500;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .links a:hover, .links button:hover {
-      transform: scale(1.03);
-    }
-    .links a[href*="spotify"] { background: #1DB954; }
-    .links a[href*="youtube"] { background: #FF0000; }
-    .chatgpt-button { background: #0D0D0D; }
-    .amazon-button { background: #FF9900; }
-    .soundcloud-button { background: #FF5500; }
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: #f4f4f4;
+  color: #222;
+}
+header {
+  background: #101010;
+  color: white;
+  text-align: center;
+  padding: 15px 10px 8px;
+}
+h1 {
+  margin: 0;
+  font-size: 1.8em;
+}
+.logo-img {
+  max-width: 120px;
+  height: auto;
+  margin-top: 10px;
+}
+.subtitle {
+  font-size: 0.95em;
+  color: #ccc;
+  margin-top: 5px;
+}
+.button-cubes-top {
+  margin: 15px auto 5px;
+  display: inline-block;
+}
+.button-cubes-top a {
+  background: #F1C40F;
+  color: white;
+  padding: 10px 16px;
+  font-size: 0.95em;
+  text-decoration: none;
+  border-radius: 8px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.button-cubes-top a:hover {
+  transform: scale(1.05);
+}
+.date-buttons {
+  background: #000;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+}
+.date-buttons button {
+  background: #F1C40F;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  font-size: 0.95em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.date-buttons button.active {
+  background: #333;
+}
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 20px;
+}
+.card {
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  margin: 0 0 20px;
+  font-size: 1.6em;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.links a, .links button {
+  width: 90%;
+  max-width: 300px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.links a:hover, .links button:hover {
+  transform: scale(1.03);
+}
 
-    /* 🎯 Custom Share Button */
-    .share-button {
-      background: #8e44ad;
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      font-size: 0.9em;
-      padding: 8px 12px;
-      border-radius: 6px;
-      width: auto;
-      max-width: 240px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    .share-button:hover {
-      background: #732d91;
-      transform: scale(1.05);
-    }
+/* 🌐 Platform-specific buttons */
+.links a[href*="spotify"] { background: #1DB954; }
+.links a[href*="youtube"] { background: #FF0000; }
+.chatgpt-button { background: #0D0D0D; }
+.amazon-button { background: #FF9900; }
+.soundcloud-button { background: #FF5500; }
 
-    .pagination {
-      text-align: center;
-      padding: 20px 0;
-    }
-    .pagination button {
-      margin: 0 6px;
-      padding: 10px 16px;
-      font-size: 1em;
-      border: none;
-      border-radius: 5px;
-      background: #444;
-      color: white;
-      cursor: pointer;
-    }
-    .pagination button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.95em;
-      color: #666;
-    }
-    footer a {
-      color: #0077cc;
-      text-decoration: none;
-    }
-    .qr-block {
-      text-align: center;
-      margin: 20px auto 40px;
-    }
-    .qr-block img {
-      max-width: 300px;
-      width: 80%;
-      margin: 10px auto;
-      display: block;
-    }
-    .qr-block p {
-      font-size: 1em;
-      padding: 0 20px;
-      color: #444;
-      line-height: 1.4em;
-    }
-    .fb-like-container {
-      display: flex;
-      justify-content: center;
-      margin: 0;
-      padding: 0;
-    }
-    .fb-like {
-      max-width: 100%;
-      margin: 0;
-      padding: 0;
-    }
+/* 🍎 Apple Music Button */
+.applemusic-button {
+  background: #FA233B;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  width: 90%;
+  max-width: 300px;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.applemusic-button:hover {
+  background: #c9142e;
+  transform: scale(1.03);
+}
+
+/* 📲 Share Button */
+.share-button {
+  background: #8e44ad;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: auto;
+  max-width: 240px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.share-button:hover {
+  background: #732d91;
+  transform: scale(1.05);
+}
+.pagination {
+  text-align: center;
+  padding: 20px 0;
+}
+.pagination button {
+  margin: 0 6px;
+  padding: 10px 16px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  background: #444;
+  color: white;
+  cursor: pointer;
+}
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.95em;
+  color: #666;
+}
+footer a {
+  color: #0077cc;
+  text-decoration: none;
+}
+.qr-block {
+  text-align: center;
+  margin: 20px auto 40px;
+}
+.qr-block img {
+  max-width: 300px;
+  width: 80%;
+  margin: 10px auto;
+  display: block;
+}
+.qr-block p {
+  font-size: 1em;
+  padding: 0 20px;
+  color: #444;
+  line-height: 1.4em;
+}
+.fb-like-container {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+.fb-like {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
   </style>
 </head>
 <body>
@@ -295,6 +316,7 @@
       const card = document.createElement('div');
       card.className = 'card';
       const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
+      const appleMusicSearchUrl = `https://music.apple.com/search?term=${encodeURIComponent(p.name)}`;
       card.innerHTML = `
         <h2>${p.name}</h2>
         <div class="links">
@@ -303,6 +325,7 @@
           <a href="${p.youtube}">YouTube Music</a>
           <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
           <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
+          <a href="${appleMusicSearchUrl}" class="applemusic-button" target="_blank" rel="noopener">Apple Music</a>
           <button class="share-button" onclick="copyToClipboardOrShareSMS('${p.name}', '${shareUrl}')">📲 Share This Artist</button>
         </div>
       `;
@@ -330,7 +353,8 @@
             youtube: getText('youtube_music_url'),
             chatgpt: getText('chatgpt_url'),
             amazon: getText('amazon_music_url'),
-            soundcloud: getText('soundcloud_url'),
+            soundcloud: getText('soundcloud_url')
+            // No need for Apple Music URL anymore
           });
         }
 
