@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jazz Fest Sampler</title>
+  <meta name="description" content="brought to you by The Outsiders Guide to Fest Season">
+  <meta name="author" content="The Outsiders Guide to Fest Season">
+  <link rel="icon" type="image/png" sizes="32x32"
+        href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+    header {
+      background: #101010;
+      color: #fff;
+      text-align: center;
+      padding: 1rem 0.5rem;
+    }
+    h1 { margin: 0; font-size: 1.8em; }
+    .logo-img { max-width: 120px; margin: 0.5rem auto; display: block; }
+    .subtitle {
+      font-size: 0.95em;
+      color: #ccc;
+      margin-top: 0.5rem;
+    }
+    #searchInput {
+      width: calc(100% - 2rem);
+      max-width: 400px;
+      margin: 1rem auto;
+      display: block;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      width: 280px;
+      transition: box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.4em;
+      text-align: center;
+    }
+    .links {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .links a,
+    .links button {
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      border: none;
+      transition: transform 0.1s ease;
+    }
+    .links a:hover,
+    .links button:hover { transform: scale(1.02); }
+
+    .amazon-button   { background: #FF9900; }
+    .soundcloud-button { background: #FF5500; }
+    .applemusic-button { background: #FA233B; }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9em;
+      color: #666;
+    }
+    footer a { color: #0077cc; text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .cards-container { flex-direction: column; align-items: center; }
+      .card { width: 90%; max-width: 400px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Jazz Fest Sampler</h1>
+    <img class="logo-img" src="logo.jpg" alt="Jazz Fest Logo">
+    <div class="subtitle">
+      brought to you by
+      <a href="https://www.facebook.com/61575041643776" style="color:#ccc;text-decoration:none;">
+        The Outsiders Guide to Fest Season
+      </a>
+    </div>
+    <input id="searchInput" type="text" placeholder="Search artists…">
+  </header>
+
+  <div class="cards-container" id="cardsContainer"></div>
+
+  <footer>
+    brought to you by
+    <a href="https://www.facebook.com/61575041643776">The Outsiders Guide to Fest Season</a>
+  </footer>
+
+  <script>
+    const cardsContainer = document.getElementById('cardsContainer');
+    const searchInput = document.getElementById('searchInput');
+    let allPerformances = [];
+
+    function isMobileDevice() {
+      return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    }
+
+    function copyOrShare(name, url) {
+      if (isMobileDevice()) {
+        window.location.href = `sms:?&body=${encodeURIComponent(
+          `Check out ${name}: ${url}`
+        )}`;
+      } else {
+        navigator.clipboard.writeText(url)
+          .then(() => alert('Link copied to clipboard!'))
+          .catch(() => alert('Could not copy link.'));
+      }
+    }
+
+    function createCard(p) {
+      const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
+      const amazonUrl    = p.amazon;
+      const soundcloudUrl = p.soundcloud;
+      const appleMusicUrl = `https://music.apple.com/search?term=${encodeURIComponent(p.name)}`;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h2>${p.name}</h2>
+        <div class="links">
+          <a href="${amazonUrl}" class="amazon-button" target="_blank">Amazon Music</a>
+          <a href="${soundcloudUrl}" class="soundcloud-button" target="_blank">SoundCloud</a>
+          <a href="${appleMusicUrl}" class="applemusic-button" target="_blank">Apple Music</a>
+          <button onclick="copyOrShare('${p.name}','${shareUrl}')">📲 Share</button>
+        </div>
+      `;
+      cardsContainer.appendChild(card);
+    }
+
+    function renderAll(list) {
+      cardsContainer.innerHTML = '';
+      list.forEach(createCard);
+    }
+
+    fetch('dataprocessed.xml')
+      .then(r => r.text())
+      .then(text => {
+        const xml = new DOMParser().parseFromString(text, 'application/xml');
+        Array.from(xml.getElementsByTagName('performance')).forEach(el => {
+          const get = tag => {
+            const node = el.getElementsByTagName(tag)[0];
+            return node ? node.textContent.trim() : '';
+          };
+          allPerformances.push({
+            name: get('name'),
+            amazon: get('amazon_music_url'),
+            soundcloud: get('soundcloud_url')
+          });
+        });
+        allPerformances.sort((a, b) => a.name.localeCompare(b.name));
+        renderAll(allPerformances);
+      });
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase().trim();
+      if (!q) return renderAll(allPerformances);
+      renderAll(allPerformances.filter(p => p.name.toLowerCase().includes(q)));
+    });
+  </script>
+</body>
+</html>
