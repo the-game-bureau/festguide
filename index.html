@@ -280,6 +280,18 @@ footer a {
     <p>Show this QR code to a friend — they can scan it with their phone to instantly access the Sampler.</p>
   </div>
 
+  <div style="text-align: center; margin: 20px;">
+    <button
+      class="share-button"
+      onclick="copyToClipboardOrShareSMS(
+        'Jazz Fest Sampler App',
+        window.location.origin + window.location.pathname
+      )"
+    >
+      Text This App To A Friend
+    </button>
+  </div>
+
   <script async defer crossorigin="anonymous"
           src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0"></script>
 
