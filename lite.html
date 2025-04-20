@@ -65,22 +65,29 @@
       color: #111;
       border: none;
       border-radius: 8px;
-      padding: 0.75rem;
-      text-align: center;
+      width: 100%;
+      height: 7rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
       transition: transform 0.1s ease;
-      width: 100%;
     }
     .chatgpt-button:hover {
       transform: scale(1.02);
       background: #d4ac0d;
     }
     .chatgpt-button .artist-name {
-      font-size: 1.2em;
-      line-height: 1.2;
+      font-size: clamp(1rem, 5vw, 2.5rem);
+      font-weight: bold;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .chatgpt-button .date-label {
-      font-size: 0.8em;
+      font-size: 0.75em;
       opacity: 0.8;
       margin-top: 0.25em;
     }
@@ -91,6 +98,11 @@
       color: #666;
     }
     footer a { color: #0077cc; text-decoration: none; }
+    @media (max-width: 600px) {
+      .chatgpt-button {
+        height: 6rem;
+      }
+    }
   </style>
 </head>
 <body>
