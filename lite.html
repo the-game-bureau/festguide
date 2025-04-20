@@ -79,12 +79,13 @@
       background: #d4ac0d;
     }
     .chatgpt-button .artist-name {
-      font-size: clamp(1rem, 5vw, 2.5rem);
+      font-size: clamp(14px, 5vw, 24px);
       font-weight: bold;
       line-height: 1.1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      text-align: center;
     }
     .chatgpt-button .date-label {
       font-size: 0.75em;
