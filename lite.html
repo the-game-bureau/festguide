@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jazz Fest Sampler</title>
-  <meta name="description" content="brought to you by The Outsiders Guide to Fest Season">
-  <meta name="author" content="The Outsiders Guide to Fest Season">
-  <link rel="icon" type="image/png" sizes="32x32"
-        href="https://www.jazzandheritage.org/wp-content/themes/jazzandheritage/images/favicons/favicon-32x32.png">
+  <title>Jazz Fest Sampler Lite</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -22,72 +18,72 @@
       text-align: center;
       padding: 1rem 0.5rem;
     }
-    h1 { margin: 0; font-size: 1.8em; }
-    .logo-img { max-width: 120px; margin: 0.5rem auto; display: block; }
-    .subtitle {
-      font-size: 0.95em;
-      color: #ccc;
-      margin-top: 0.5rem;
-    }
-    #searchInput {
-      width: calc(100% - 2rem);
-      max-width: 400px;
-      margin: 1rem auto;
+    .logo-img {
+      max-width: 120px;
+      margin: 0.5rem auto;
       display: block;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8em;
+    }
+    .day-group {
+      margin-bottom: 2rem;
+    }
+    .day-heading {
+      margin: 1rem;
+      font-size: 1.5em;
+      color: #333;
+      text-align: center;
     }
     .cards-container {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 1rem;
-      padding: 1rem;
+      padding: 0 1rem 1rem;
     }
     .card {
       background: #fff;
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1rem;
       box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      width: 280px;
+      width: 90%;
+      max-width: 400px;
       transition: box-shadow 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
     }
-    .card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-    .card h2 {
-      margin: 0 0 1rem;
-      font-size: 1.4em;
-      text-align: center;
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
     .links {
-      margin-top: auto;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
-    .links a,
-    .links button {
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-size: 0.95em;
-      font-weight: 500;
-      text-align: center;
-      text-decoration: none;
-      color: #fff;
+    .chatgpt-button {
+      background: #F1C40F;
+      color: #111;
       border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+      cursor: pointer;
       transition: transform 0.1s ease;
+      width: 100%;
     }
-    .links a:hover,
-    .links button:hover { transform: scale(1.02); }
-
-    .amazon-button   { background: #FF9900; }
-    .soundcloud-button { background: #FF5500; }
-    .applemusic-button { background: #FA233B; }
-
+    .chatgpt-button:hover {
+      transform: scale(1.02);
+      background: #d4ac0d;
+    }
+    .chatgpt-button .artist-name {
+      font-size: 1.2em;
+      line-height: 1.2;
+    }
+    .chatgpt-button .date-label {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin-top: 0.25em;
+    }
     footer {
       text-align: center;
       padding: 1rem;
@@ -95,27 +91,15 @@
       color: #666;
     }
     footer a { color: #0077cc; text-decoration: none; }
-
-    @media (max-width: 600px) {
-      .cards-container { flex-direction: column; align-items: center; }
-      .card { width: 90%; max-width: 400px; }
-    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Jazz Fest Sampler</h1>
     <img class="logo-img" src="logo.jpg" alt="Jazz Fest Logo">
-    <div class="subtitle">
-      brought to you by
-      <a href="https://www.facebook.com/61575041643776" style="color:#ccc;text-decoration:none;">
-        The Outsiders Guide to Fest Season
-      </a>
-    </div>
-    <input id="searchInput" type="text" placeholder="Search artists…">
+    <h1>Jazz Fest Sampler Lite</h1>
   </header>
 
-  <div class="cards-container" id="cardsContainer"></div>
+  <div id="dateGroupsContainer"></div>
 
   <footer>
     brought to you by
@@ -123,75 +107,82 @@
   </footer>
 
   <script>
-    const cardsContainer = document.getElementById('cardsContainer');
-    const searchInput = document.getElementById('searchInput');
+    const container = document.getElementById('dateGroupsContainer');
     let allPerformances = [];
 
-    function isMobileDevice() {
-      return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
     }
 
-    function copyOrShare(name, url) {
-      if (isMobileDevice()) {
-        window.location.href = `sms:?&body=${encodeURIComponent(
-          `Check out ${name}: ${url}`
-        )}`;
-      } else {
-        navigator.clipboard.writeText(url)
-          .then(() => alert('Link copied to clipboard!'))
-          .catch(() => alert('Could not copy link.'));
-      }
+    function groupByDate(list) {
+      return list.reduce((acc, p) => {
+        (acc[p.date] = acc[p.date] || []).push(p);
+        return acc;
+      }, {});
     }
 
-    function createCard(p) {
-      const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
-      const amazonUrl    = p.amazon;
-      const soundcloudUrl = p.soundcloud;
-      const appleMusicUrl = `https://music.apple.com/search?term=${encodeURIComponent(p.name)}`;
+    function render(groups) {
+      container.innerHTML = '';
+      Object.keys(groups).sort().forEach(date => {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day-group';
 
+        const heading = document.createElement('h2');
+        heading.className = 'day-heading';
+        heading.textContent = formatDate(date);
+        dayDiv.appendChild(heading);
+
+        const cards = document.createElement('div');
+        cards.className = 'cards-container';
+        groups[date]
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .forEach(p => createCard(cards, p, date));
+        dayDiv.appendChild(cards);
+
+        container.appendChild(dayDiv);
+      });
+    }
+
+    function createCard(parent, p, date) {
+      const chatgptUrl = p.chatgpt;
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <h2>${p.name}</h2>
         <div class="links">
-          <a href="${amazonUrl}" class="amazon-button" target="_blank">Amazon Music</a>
-          <a href="${soundcloudUrl}" class="soundcloud-button" target="_blank">SoundCloud</a>
-          <a href="${appleMusicUrl}" class="applemusic-button" target="_blank">Apple Music</a>
-          <button onclick="copyOrShare('${p.name}','${shareUrl}')">📲 Share</button>
+          <button class="chatgpt-button" onclick="window.open('${chatgptUrl}', '_blank')">
+            <div class="artist-name">${p.name}</div>
+            <div class="date-label">${formatDate(date)}</div>
+          </button>
         </div>
       `;
-      cardsContainer.appendChild(card);
+      parent.appendChild(card);
     }
 
-    function renderAll(list) {
-      cardsContainer.innerHTML = '';
-      list.forEach(createCard);
+    function refresh(list) {
+      render(groupByDate(list));
     }
 
     fetch('dataprocessed.xml')
       .then(r => r.text())
-      .then(text => {
-        const xml = new DOMParser().parseFromString(text, 'application/xml');
+      .then(xmlStr => {
+        const xml = new DOMParser().parseFromString(xmlStr, 'application/xml');
         Array.from(xml.getElementsByTagName('performance')).forEach(el => {
-          const get = tag => {
-            const node = el.getElementsByTagName(tag)[0];
-            return node ? node.textContent.trim() : '';
-          };
-          allPerformances.push({
-            name: get('name'),
-            amazon: get('amazon_music_url'),
-            soundcloud: get('soundcloud_url')
-          });
+          const nameNode = el.getElementsByTagName('name')[0];
+          const dateNode = el.getElementsByTagName('date')[0];
+          const chatNode = el.getElementsByTagName('chatgpt_url')[0];
+          if (nameNode && dateNode && chatNode) {
+            allPerformances.push({
+              name:    nameNode.textContent.trim(),
+              date:    dateNode.textContent.trim(),
+              chatgpt: chatNode.textContent.trim()
+            });
+          }
         });
-        allPerformances.sort((a, b) => a.name.localeCompare(b.name));
-        renderAll(allPerformances);
+        refresh(allPerformances);
       });
-
-    searchInput.addEventListener('input', () => {
-      const q = searchInput.value.toLowerCase().trim();
-      if (!q) return renderAll(allPerformances);
-      renderAll(allPerformances.filter(p => p.name.toLowerCase().includes(q)));
-    });
   </script>
 </body>
 </html>
