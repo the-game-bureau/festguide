@@ -319,18 +319,21 @@
         The Outsiders Guide to Fest Season
       </a>
 
-<button class="share-button" onclick="(function(){
-        const msg = 'Check out the Jazz Fest Sampler! https://the-game-bureau.github.io/festguide';
-        if (isMobileDevice()) {
+      <button class="share-button" onclick="(function(){
+        const url = window.location.href;
+        const msg = 'Check out the Jazz Fest Sampler! ' + url;
+        // simple mobile‐UA check inline:
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
           window.location.href = 'sms:?&body=' + encodeURIComponent(msg);
         } else {
-          navigator.clipboard.writeText(msg)
-            .then(() => alert('Link copied to clipboard!'))
+          navigator.clipboard.writeText(url)
+            .then(() => alert('Sampler link copied to clipboard!'))
             .catch(() => alert('Could not copy the link.'));
         }
-      })()">
+      })();">
         Text The Sampler To A Friend
       </button>
+      
       <a href="jazzfest2025_qr.png">
         Share The Sampler QR Code
       </a>
