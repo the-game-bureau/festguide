@@ -357,150 +357,189 @@
   <script async defer crossorigin="anonymous"
           src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0"></script>
 
-  <script>
-    let allPerformances = [];
-    let filteredDates = [];
-    let currentPageIndex = 0;
-
-    const searchInput = document.getElementById('searchInput');
-    const cardsContainer = document.getElementById('cardsContainer');
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-    const dateButtons = document.getElementById('dateButtons');
-    const backToTopBtn = document.getElementById('backToTop');
-
-    function isMobileDevice() {
-      return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-    }
-
-    function copyToClipboardOrShareSMS(artistName, shareUrl) {
-      if (isMobileDevice()) {
-        window.location.href = `sms:?&body=${encodeURIComponent(`Check out this artist: ${artistName} – ${shareUrl}`)}`;
-      } else {
-        navigator.clipboard.writeText(shareUrl)
-          .then(() => alert('🎵 Link copied to clipboard!'))
-          .catch(() => alert('Could not copy the link.'));
-      }
-    }
-
-    function createCard(p) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
-      const appleMusicSearchUrl = `https://music.apple.com/search?term=${encodeURIComponent(p.name)}`;
-      const spotifySearchUrl = `https://open.spotify.com/search/${encodeURIComponent(p.name)}/artists`;
-
-      card.innerHTML = `
-        <h2>${p.name}</h2>
-        <div class="links">
-          <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
-          <a href="${spotifySearchUrl}">Spotify</a>
-          <a href="${p.youtube}">YouTube Music</a>
-          <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
-          <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
-          <a href="${appleMusicSearchUrl}" class="applemusic-button" target="_blank" rel="noopener">Apple Music</a>
-          <button class="share-button" onclick="copyToClipboardOrShareSMS('${p.name}', '${shareUrl}')">📲 Share This Artist</button>
-        </div>
-      `;
-      cardsContainer.appendChild(card);
-    }
-
-    fetch('dataprocessed.xml')
-      .then(response => response.text())
-      .then(data => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data, "application/xml");
-        const performances = Array.from(xml.getElementsByTagName('performance'));
-
-        performances.forEach(perf => {
-          const getText = tag => {
-            const el = perf.getElementsByTagName(tag)[0];
-            return el ? el.textContent.trim() : '';
-          };
-          allPerformances.push({
-            name: getText('name'),
-            date: getText('date'),
-            song: getText('most_popular_song'),
-            youtube: getText('youtube_music_url'),
-            chatgpt: getText('chatgpt_url'),
-            amazon: getText('amazon_music_url'),
-            soundcloud: getText('soundcloud_url')
-          });
-        });
-
-        filteredDates = [...new Set(allPerformances.map(p => p.date))].sort();
-        const today = new Date();
-        const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-        currentPageIndex = filteredDates.findIndex(d => d >= todayStr);
-        if (currentPageIndex === -1) currentPageIndex = 0;
-
-        filteredDates.forEach((date, i) => {
-          const btn = document.createElement('button');
-          btn.textContent = date;
-          btn.addEventListener('click', () => {
-            window.history.pushState({}, '', `?date=${date}`);
-            currentPageIndex = i;
-            renderPage();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          });
-          dateButtons.appendChild(btn);
-        });
-
-        renderPage();
-      });
-
-    prevBtn.addEventListener('click', () => {
-      if (currentPageIndex > 0) {
-        currentPageIndex--;
-        const date = filteredDates[currentPageIndex];
-        window.history.pushState({}, '', `?date=${date}`);
-        renderPage();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentPageIndex < filteredDates.length - 1) {
-        currentPageIndex++;
-        const date = filteredDates[currentPageIndex];
-        window.history.pushState({}, '', `?date=${date}`);
-        renderPage();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
-
-    backToTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    window.addEventListener('scroll', () => {
-      backToTopBtn.style.display = window.scrollY > 200 ? 'inline-block' : 'none';
-    });
-
-    window.onpopstate = renderPage;
-
-    function renderPage() {
-      const params = new URLSearchParams(window.location.search);
-      const dateParam = params.get('date');
-      let performancesToShow;
-
-      if (dateParam && filteredDates.includes(dateParam)) {
-        currentPageIndex = filteredDates.indexOf(dateParam);
-        performancesToShow = allPerformances.filter(p => p.date === dateParam);
-      } else {
-        const date = filteredDates[currentPageIndex];
-        performancesToShow = allPerformances.filter(p => p.date === date);
-      }
-
-      dateButtons.querySelectorAll('button').forEach((btn, idx) => {
-        btn.classList.toggle('active', idx === currentPageIndex);
-      });
-      prevBtn.disabled = currentPageIndex === 0;
-      nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
-
-      cardsContainer.innerHTML = '';
-      performancesToShow.forEach(createCard);
-    }
-  </script>
+          <script>
+            // ─── Data & State ───
+            let allPerformances = [];
+            let filteredDates = [];
+            let currentPageIndex = 0;
+          
+            // ─── DOM References ───
+            const searchInput     = document.getElementById('searchInput');
+            const dateButtons     = document.getElementById('dateButtons');
+            const cardsContainer  = document.getElementById('cardsContainer');
+            const prevBtn         = document.getElementById('prevPage');
+            const nextBtn         = document.getElementById('nextPage');
+            const backToTopBtn    = document.getElementById('backToTop');
+          
+            // ─── Helpers ───
+            function isMobileDevice() {
+              return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
+                .test(navigator.userAgent);
+            }
+          
+            function copyToClipboardOrShareSMS(artistName, shareUrl) {
+              if (isMobileDevice()) {
+                window.location.href = `sms:?&body=${encodeURIComponent(
+                  `Check out this artist: ${artistName} – ${shareUrl}`
+                )}`;
+              } else {
+                navigator.clipboard.writeText(shareUrl)
+                  .then(() => alert('🎵 Link copied to clipboard!'))
+                  .catch(() => alert('Could not copy the link.'));
+              }
+            }
+          
+            function createCard(p) {
+              const card = document.createElement('div');
+              card.className = 'card';
+          
+              const shareUrl = `${window.location.origin}${window.location.pathname}?artist=${encodeURIComponent(p.name)}`;
+              const appleMusicSearchUrl = `https://music.apple.com/search?term=${encodeURIComponent(p.name)}`;
+              const spotifySearchUrl    = `https://open.spotify.com/search/${encodeURIComponent(p.name)}/artists`;
+          
+              card.innerHTML = `
+                <h2>${p.name}</h2>
+                <div class="links">
+                  <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
+                  <a href="${spotifySearchUrl}">Spotify</a>
+                  <a href="${p.youtube}">YouTube Music</a>
+                  <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
+                  <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
+                  <a href="${appleMusicSearchUrl}" class="applemusic-button" target="_blank" rel="noopener">Apple Music</a>
+                  <button class="share-button" onclick="copyToClipboardOrShareSMS('${p.name}', '${shareUrl}')">
+                    📲 Share This Artist
+                  </button>
+                </div>
+              `;
+              cardsContainer.appendChild(card);
+            }
+          
+            // ─── Fetch & Initialize ───
+            fetch('dataprocessed.xml')
+              .then(res => res.text())
+              .then(str => {
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(str, "application/xml");
+                const performances = Array.from(xml.getElementsByTagName('performance'));
+          
+                performances.forEach(perf => {
+                  const getText = tag => {
+                    const el = perf.getElementsByTagName(tag)[0];
+                    return el ? el.textContent.trim() : '';
+                  };
+                  allPerformances.push({
+                    name: getText('name'),
+                    date: getText('date'),
+                    song: getText('most_popular_song'),
+                    youtube: getText('youtube_music_url'),
+                    chatgpt: getText('chatgpt_url'),
+                    amazon: getText('amazon_music_url'),
+                    soundcloud: getText('soundcloud_url')
+                  });
+                });
+          
+                // unique sorted dates
+                filteredDates = [...new Set(allPerformances.map(p => p.date))].sort();
+          
+                // start at today's date or first
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+                currentPageIndex = filteredDates.findIndex(d => d >= todayStr);
+                if (currentPageIndex === -1) currentPageIndex = 0;
+          
+                // build date buttons
+                filteredDates.forEach((date, i) => {
+                  const btn = document.createElement('button');
+                  btn.textContent = date;
+                  btn.addEventListener('click', () => {
+                    window.history.pushState({}, '', `?date=${date}`);
+                    currentPageIndex = i;
+                    renderPage();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  });
+                  dateButtons.appendChild(btn);
+                });
+          
+                renderPage();
+              });
+          
+            // ─── Pagination Controls ───
+            prevBtn.addEventListener('click', () => {
+              if (currentPageIndex > 0) {
+                currentPageIndex--;
+                const date = filteredDates[currentPageIndex];
+                window.history.pushState({}, '', `?date=${date}`);
+                renderPage();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            });
+            nextBtn.addEventListener('click', () => {
+              if (currentPageIndex < filteredDates.length - 1) {
+                currentPageIndex++;
+                const date = filteredDates[currentPageIndex];
+                window.history.pushState({}, '', `?date=${date}`);
+                renderPage();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            });
+          
+            // ─── Back to Top Button ───
+            backToTopBtn.addEventListener('click', () => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            window.addEventListener('scroll', () => {
+              backToTopBtn.style.display = window.scrollY > 200 ? 'inline-block' : 'none';
+            });
+          
+            // ─── Browser Navigation ───
+            window.onpopstate = renderPage;
+          
+            // ─── Artist Search Filter ───
+            searchInput.addEventListener('input', () => {
+              const term = searchInput.value.trim().toLowerCase();
+          
+              if (term) {
+                dateButtons.style.display = 'none';
+                const matches = allPerformances.filter(p =>
+                  p.name.toLowerCase().includes(term)
+                );
+                cardsContainer.innerHTML = '';
+                matches.forEach(createCard);
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                backToTopBtn.style.display = matches.length ? 'inline-block' : 'none';
+              } else {
+                dateButtons.style.display = '';
+                renderPage();
+              }
+            });
+          
+            // ─── Render Function ───
+            function renderPage() {
+              const params = new URLSearchParams(window.location.search);
+              const dateParam = params.get('date');
+          
+              let toShow;
+              if (dateParam && filteredDates.includes(dateParam)) {
+                currentPageIndex = filteredDates.indexOf(dateParam);
+                toShow = allPerformances.filter(p => p.date === dateParam);
+              } else {
+                const date = filteredDates[currentPageIndex];
+                toShow = allPerformances.filter(p => p.date === date);
+              }
+          
+              // highlight active date button
+              Array.from(dateButtons.children).forEach((btn, idx) => {
+                btn.classList.toggle('active', idx === currentPageIndex);
+              });
+          
+              prevBtn.disabled = currentPageIndex === 0;
+              nextBtn.disabled = currentPageIndex === filteredDates.length - 1;
+          
+              cardsContainer.innerHTML = '';
+              toShow.forEach(createCard);
+            }
+          </script>
+          
 </body>
 </html>
