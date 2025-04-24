@@ -382,34 +382,38 @@
     }
   
     // ─── Card Creation ───
+    
     function createCard(p) {
-      const baseUrl     = getBaseUrl();
-      const shareUrl    = `${baseUrl}?artist=${encodeURIComponent(p.name)}`;
-      const appleMusic  = `https://music.apple.com/search?term=${encodeURIComponent(p.name)}`;
-      const spotify     = `https://open.spotify.com/search/${encodeURIComponent(p.name)}/artists`;
-  
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <h2>${p.name}</h2>
-        <div class="links">
-          <a href="${p.chatgpt}"           class="chatgpt-button">ChatGPT</a>
-          <a href="${spotify}">Spotify</a>
-          <a href="${p.youtube}">YouTube Music</a>
-          <a href="${p.amazon}"            class="amazon-button">Amazon Music</a>
-          <a href="${p.soundcloud}"        class="soundcloud-button">SoundCloud</a>
-          <a href="${appleMusic}"          class="applemusic-button" target="_blank" rel="noopener">Apple Music</a>
-          <button class="share-button" onclick="
-            navigator.clipboard.writeText('${shareUrl}')
-              .then(()=>alert('Link copied to clipboard!'))
-              .catch(()=>alert('Could not copy link.'));
-          ">
-            📲 Share This Artist
-          </button>
-        </div>
-      `;
-      cardsContainer.appendChild(card);
-    }
+  const baseUrl  = getBaseUrl();
+  const shareUrl = `${baseUrl}?artist=${encodeURIComponent(p.name)}`;
+  // ...
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <h2>${p.name}</h2>
+    <div class="links">
+      <!-- other buttons... -->
+      <button class="share-button" onclick="
+        (function(){
+          const msg = 'Check out ${p.name} on Jazz Fest Sampler! ${shareUrl}';
+          if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            // open SMS composer
+            window.location.href = 'sms:?&body=' + encodeURIComponent(msg);
+          } else {
+            // fallback to clipboard
+            navigator.clipboard.writeText(msg)
+              .then(() => alert('Link copied to clipboard!'))
+              .catch(() => alert('Could not copy link.'));
+          }
+        })();
+      ">
+        📲 Share This Artist
+      </button>
+    </div>
+  `;
+  cardsContainer.appendChild(card);
+}
+
   
     // ─── Fetch & Initialize ───
     fetch('dataprocessed.xml')
