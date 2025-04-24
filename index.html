@@ -489,7 +489,7 @@
     searchInput.addEventListener('input', () => {
       const term = searchInput.value.trim().toLowerCase();
       if (term) {
-        dateButtons.style.display = 'none';
+        // dateButtons.style.display = 'none';
         const matches = allPerformances.filter(p =>
           p.name.toLowerCase().includes(term)
         );
