@@ -386,24 +386,28 @@
     function createCard(p) {
   const baseUrl  = getBaseUrl();
   const shareUrl = `${baseUrl}?artist=${encodeURIComponent(p.name)}`;
-  // ...
+  const msg      = `Check out ${p.name} on Jazz Fest Sampler! ${shareUrl}`;
+
   const card = document.createElement('div');
   card.className = 'card';
   card.innerHTML = `
     <h2>${p.name}</h2>
     <div class="links">
-      <!-- other buttons... -->
+      <a href="${p.chatgpt}" class="chatgpt-button">ChatGPT</a>
+      <a href="https://open.spotify.com/search/${encodeURIComponent(p.name)}/artists">Spotify</a>
+      <a href="${p.youtube}">YouTube Music</a>
+      <a href="${p.amazon}" class="amazon-button">Amazon Music</a>
+      <a href="${p.soundcloud}" class="soundcloud-button">SoundCloud</a>
+      <a href="https://music.apple.com/search?term=${encodeURIComponent(p.name)}"
+         class="applemusic-button" target="_blank" rel="noopener">Apple Music</a>
       <button class="share-button" onclick="
         (function(){
-          const msg = 'Check out ${p.name} on Jazz Fest Sampler! ${shareUrl}';
           if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            // open SMS composer
-            window.location.href = 'sms:?&body=' + encodeURIComponent(msg);
+            window.location.href = 'sms:?&body=' + encodeURIComponent('${msg}');
           } else {
-            // fallback to clipboard
-            navigator.clipboard.writeText(msg)
-              .then(() => alert('Link copied to clipboard!'))
-              .catch(() => alert('Could not copy link.'));
+            navigator.clipboard.writeText('${msg}')
+              .then(()=>alert('Link copied to clipboard!'))
+              .catch(()=>alert('Could not copy link.'));
           }
         })();
       ">
